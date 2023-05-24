@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "Cell.h"
 
 enum class TetrominoType
@@ -18,8 +19,8 @@ class Tetromino
 {
 private:
     TetrominoType type;
-    std::vector<Cell> cells;
-    Cell pos;
+    std::vector<std::shared_ptr<Cell>> cells;
+    std::shared_ptr<Cell> pos;
 
 public:
     Tetromino(TetrominoType type, Cell startPos);
