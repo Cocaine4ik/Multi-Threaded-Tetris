@@ -1,13 +1,16 @@
 #include "Tetromino.h"
 #include "Cell.h"
+#include "Board.h"
 
-Tetromino::Tetromino(TetrominoType type, Cell startPos)
+#define TETROMINO_CHAR '*'
+
+Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> startPos)
 {
     this->type = type;
     this->pos = startPos;
 
-    auto posX = pos.GetX();
-    auto posY = pos.GetY();
+    auto posX = pos->GetX();
+    auto posY = pos->GetY();
 
     switch (type)
     {
@@ -15,9 +18,9 @@ Tetromino::Tetromino(TetrominoType type, Cell startPos)
         cells = 
         {
             pos,
-            Cell(posX + 1, posY),
-            Cell(posX + 2, posY),
-            Cell(posX + 3, posY)
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
+            std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
+            std::make_shared<Cell>() = board->GetCell(posX + 3, posY)
         }; 
         break;
 
@@ -25,9 +28,9 @@ Tetromino::Tetromino(TetrominoType type, Cell startPos)
         cells =
         {
             pos, 
-            Cell(posX + 1, posY),
-            Cell(posX, posY + 1),
-            Cell(posX - 1, posY + 1)
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
+            std::make_shared<Cell>() = board->GetCell(posX, posY + 1),
+            std::make_shared<Cell>() = board->GetCell(posX - 1, posY + 1)
         };
         break;
 
@@ -35,9 +38,9 @@ Tetromino::Tetromino(TetrominoType type, Cell startPos)
         cells =
         {
             pos,
-            Cell(posX - 1, posY),
-            Cell(posX, posY + 1),
-            Cell(posX + 1, posY + 1)
+            std::make_shared<Cell>() = board->GetCell(posX - 1, posY),
+            std::make_shared<Cell>() = board->GetCell(posX, posY + 1),
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY + 1)
         };
         break;
 
@@ -45,9 +48,9 @@ Tetromino::Tetromino(TetrominoType type, Cell startPos)
         cells =
         {
             pos,
-            Cell(posX + 1, posY),
-            Cell(posX, posY + 1),
-            Cell(posX + 1, posY + 1)
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
+            std::make_shared<Cell>() = board->GetCell(posX, posY + 1),
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY + 1)
         };
         break;
 
@@ -55,9 +58,9 @@ Tetromino::Tetromino(TetrominoType type, Cell startPos)
         cells =
         {
             pos,
-            Cell(posX + 1, posY),
-            Cell(posX + 2, posY),
-            Cell(posX + 1, posY + 1)
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
+            std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY + 1)
         };
         break;
 
@@ -65,9 +68,9 @@ Tetromino::Tetromino(TetrominoType type, Cell startPos)
         cells =
         {
             pos,
-            Cell(posX + 1, posY),
-            Cell(posX + 2, posY),
-            Cell(posX, posY + 1)
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
+            std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
+            std::make_shared<Cell>() = board->GetCell(posX, posY + 1)
         };
         break;
 
@@ -75,11 +78,16 @@ Tetromino::Tetromino(TetrominoType type, Cell startPos)
         cells =
         {
             pos,
-            Cell(posX + 1, posY),
-            Cell(posX + 2, posY),
-            Cell(posX + 2, posY + 1)
+            std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
+            std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
+            std::make_shared<Cell>() = board->GetCell(posX + 2, posY + 1)
         };
         break;
+    }
+
+    for (auto cell : cells) 
+    {
+        cell->SetChr(TETROMINO_CHAR);
     }
 }
 
@@ -87,6 +95,6 @@ void Tetromino::FallDawn()
 {
     for (auto& cell : cells)
     {
-        cell.MoveY(cell.GetY() + 1);
+        cell->MoveY(cell->GetY() + 1);
     }
 }

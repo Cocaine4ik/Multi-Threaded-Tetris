@@ -21,7 +21,7 @@ Game::Game()
 void Game::StartGame()
 {
     board = std::make_unique<Board>();
-    currentTetromino.reset(board->SpawnTetromino(TetrominoType::I));
+    currentTetromino = (board->SpawnTetromino(TetrominoType::I));
 
     isRunning = true;
 
@@ -57,6 +57,8 @@ void Game::UpdateScore()
 
 void Game::Render()
 {
+    board->Draw();
+    /*
     while (true)
     {
         currentTetromino->FallDawn();
@@ -64,5 +66,5 @@ void Game::Render()
         board->Draw();
         std::this_thread::sleep_for(std::chrono::seconds(1));
         system("cls");
-    }
+    }*/
 }

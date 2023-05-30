@@ -1,46 +1,69 @@
 #include "Board.h"
 #include <iostream>
+#include <memory>
 #include "Cell.h"
 #include "Tetromino.h"
-
+#include <algorithm>
 
 #define TABLE_WIDTH 22
 #define TABLE_HEIGHT 22
 #define BORDER_CHAR '#'
-#define TETROMINO_CHAR '*'
 #define SPAWN_POS_Y 1
 
-Board::Board() : table(TABLE_HEIGHT, std::string(TABLE_WIDTH, ' '))
+Board::Board()
 {
-    for (auto& str : table) 
+    for (int y = 0; y < TABLE_HEIGHT; y++)
     {
-        str.front() = BORDER_CHAR;
-        str.back() = BORDER_CHAR;
+        for (int x = 0; x < TABLE_WIDTH; x++)
+        {
+            auto cell = std::make_shared<Cell>(x, y);
+            cells.push_back(cell);
+        }
     }
 
-    table.front().assign(TABLE_WIDTH, BORDER_CHAR);
-    table.back().assign(TABLE_WIDTH, BORDER_CHAR);
+    for (auto cell : cells)
+    {
+        if (cell->GetX() == 0 || cell->GetY() == 0 || 
+            cell->GetX() == TABLE_WIDTH - 1 || cell->GetY() == TABLE_HEIGHT - 1)
+        {
+            cell->SetChr(BORDER_CHAR);
+        }
+    }
 
-    spawnPos.SetY(SPAWN_POS_Y);
-    spawnPos.SetX(TABLE_WIDTH / 2 - 2);
+    spawnPos = GetCell(TABLE_WIDTH / 2, SPAWN_POS_Y);
 }
 
 void Board::Draw()
 {
-    for (auto& str : table)
+    int previousY = cells.front()->GetY();
+
+    for (auto cell : cells)
     {
-        std::cout << str << std::endl;
+        if (cell->GetY() != previousY)
+        {
+            previousY = cell->GetY();
+            std::cout << std::endl;
+        }
+        std::cout << cell->GetChr();
     }
 }
 
-Tetromino* Board::SpawnTetromino(TetrominoType type)
+std::unique_ptr<Tetromino> Board::SpawnTetromino(TetrominoType type)
 {
-    Tetromino* tetromino = new Tetromino(type, Cell(spawnPos));
+    auto tetromino = std::make_unique<Tetromino>(this, type, spawnPos);
     
-    for (auto& cell : tetromino->GetCells())
-    {
-        table[cell.GetY()][cell.GetX()] = TETROMINO_CHAR;
-    }
-
     return tetromino;
+}
+
+std::shared_ptr<Cell> Board::GetCell(int x, int y) const
+{
+    auto result = std::find_if(cells.cbegin(), cells.cend(), [x, y](const std::shared_ptr<Cell>& cell)
+        {
+            return cell->GetX() == x && cell->GetY() == y;
+        });
+    if (result != cells.cend())
+    {
+        return *result;
+    }
+    return nullptr;
 }

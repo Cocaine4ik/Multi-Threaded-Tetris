@@ -5,6 +5,8 @@
 #include <memory>
 #include "Cell.h"
 
+class Board;
+
 enum class TetrominoType
 {
     I,
@@ -23,9 +25,9 @@ private:
     std::shared_ptr<Cell> pos;
 
 public:
-    Tetromino(TetrominoType type, Cell startPos);
+    Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> startPos);
     void FallDawn();
 
-    std::vector<Cell> GetCells() const { return cells; };
+    std::vector<std::shared_ptr<Cell>> GetCells() const { return cells; };
 
 };
