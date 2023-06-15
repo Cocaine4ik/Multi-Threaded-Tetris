@@ -23,4 +23,3 @@ public:
     std::shared_ptr<Cell> GetCell(int x, int y) const;
 
 };
-

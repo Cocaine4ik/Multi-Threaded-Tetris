@@ -56,14 +56,16 @@ void Game::UpdateScore()
 }
 
 void Game::Render()
+
 {
+    currentTetromino->FallDawn(board.get());
     board->Draw();
     /*
     while (true)
     {
-        currentTetromino->FallDawn();
 
-        board->Draw();
+
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
         system("cls");
     }*/

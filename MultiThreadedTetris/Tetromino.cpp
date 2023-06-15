@@ -3,6 +3,8 @@
 #include "Board.h"
 
 #define TETROMINO_CHAR '*'
+#define TETROMINO_OFFSET 1
+#define TETROMINO_I_OFFSET 2
 
 Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> startPos)
 {
@@ -15,9 +17,12 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
     switch (type)
     {
     case TetrominoType::I: 
-        cells = 
+
+        posX -= TETROMINO_I_OFFSET;
+
+        cells =
         {
-            pos,
+            std::make_shared<Cell>() = board->GetCell(posX, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 3, posY)
@@ -25,9 +30,12 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
         break;
 
     case TetrominoType::S:
+
+        posX -= TETROMINO_OFFSET;
+
         cells =
         {
-            pos, 
+            std::make_shared<Cell>() = board->GetCell(posX, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
             std::make_shared<Cell>() = board->GetCell(posX, posY + 1),
             std::make_shared<Cell>() = board->GetCell(posX - 1, posY + 1)
@@ -35,9 +43,12 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
         break;
 
     case TetrominoType::Z:
+
+        posX -= TETROMINO_OFFSET;
+
         cells =
         {
-            pos,
+            std::make_shared<Cell>() = board->GetCell(posX, posY),
             std::make_shared<Cell>() = board->GetCell(posX - 1, posY),
             std::make_shared<Cell>() = board->GetCell(posX, posY + 1),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY + 1)
@@ -45,9 +56,12 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
         break;
 
     case TetrominoType::O:
+
+        posX -= TETROMINO_OFFSET;
+
         cells =
         {
-            pos,
+            std::make_shared<Cell>() = board->GetCell(posX, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
             std::make_shared<Cell>() = board->GetCell(posX, posY + 1),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY + 1)
@@ -55,9 +69,12 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
         break;
 
     case TetrominoType::T:
+
+        posX -= TETROMINO_OFFSET;
+
         cells =
         {
-            pos,
+            std::make_shared<Cell>() = board->GetCell(posX, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY + 1)
@@ -65,9 +82,12 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
         break;
 
     case TetrominoType::L:
+
+        posX -= TETROMINO_OFFSET;
+
         cells =
         {
-            pos,
+            std::make_shared<Cell>() = board->GetCell(posX, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
             std::make_shared<Cell>() = board->GetCell(posX, posY + 1)
@@ -75,9 +95,12 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
         break;
 
     case TetrominoType::J:
+
+        posX -= TETROMINO_OFFSET;
+
         cells =
         {
-            pos,
+            std::make_shared<Cell>() = board->GetCell(posX, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 1, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 2, posY),
             std::make_shared<Cell>() = board->GetCell(posX + 2, posY + 1)
@@ -91,10 +114,10 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
     }
 }
 
-void Tetromino::FallDawn()
+void Tetromino::FallDawn(Board* board)
 {
     for (auto& cell : cells)
     {
-        cell->MoveY(cell->GetY() + 1);
+        cell = board->GetCell(cell->GetX(), cell->GetY() + 1);
     }
 }
