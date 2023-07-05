@@ -118,6 +118,8 @@ void Tetromino::FallDawn(Board* board)
 {
     for (auto& cell : cells)
     {
+        cell->SetChr(' ');
         cell = board->GetCell(cell->GetX(), cell->GetY() + 1);
+        cell->SetChr(TETROMINO_CHAR);
     }
 }
