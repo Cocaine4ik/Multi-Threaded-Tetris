@@ -118,8 +118,11 @@ void Tetromino::FallDawn(Board* board)
 {
     for (auto& cell : cells)
     {
+        auto nextCell = board->GetCell(cell->GetX(), cell->GetY() + 1);
+        if (nextCell.get() == nullptr) break;
+
         cell->SetChr(' ');
-        cell = board->GetCell(cell->GetX(), cell->GetY() + 1);
+        cell = nextCell;
         cell->SetChr(TETROMINO_CHAR);
     }
 }

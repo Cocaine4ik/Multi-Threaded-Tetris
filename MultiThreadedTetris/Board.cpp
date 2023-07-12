@@ -27,6 +27,8 @@ Board::Board()
             cell->GetX() == TABLE_WIDTH - 1 || cell->GetY() == TABLE_HEIGHT - 1)
         {
             cell->SetChr(BORDER_CHAR);
+
+            borderCells.push_back(cell);
         }
     }
 
@@ -61,9 +63,28 @@ std::shared_ptr<Cell> Board::GetCell(int x, int y) const
         {
             return cell->GetX() == x && cell->GetY() == y;
         });
-    if (result != cells.cend())
+
+    if (result != cells.cend() && !IsBuiltCell(*result) && !IsBorderCell(*result))
     {
         return *result;
     }
     return nullptr;
+}
+
+bool Board::IsBuiltCell(std::shared_ptr<Cell> cell) const
+{
+    auto it = std::find(builtCells.cbegin(), builtCells.cend(), cell);
+
+    if (it != builtCells.cend()) return true;
+
+    return false;
+}
+
+bool Board::IsBorderCell(std::shared_ptr<Cell> cell) const
+{
+    auto it = std::find(borderCells.cbegin(), borderCells.cend(), cell);
+
+    if (it != borderCells.cend()) return true;
+
+    return false;
 }
