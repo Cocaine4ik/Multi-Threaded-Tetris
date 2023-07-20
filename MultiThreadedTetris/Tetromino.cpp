@@ -11,6 +11,8 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
     this->type = type;
     this->pos = startPos;
 
+    isBuilt = false;
+
     auto posX = pos->GetX();
     auto posY = pos->GetY();
 
@@ -116,13 +118,65 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
 
 void Tetromino::FallDawn(Board* board)
 {
+    if (!CheckFallDawn(board)) return;
+
     for (auto& cell : cells)
     {
-        auto nextCell = board->GetCell(cell->GetX(), cell->GetY() + 1);
-        if (nextCell.get() == nullptr) break;
-
         cell->SetChr(' ');
-        cell = nextCell;
+    }
+    for (auto& cell : nextCells)
+    {
         cell->SetChr(TETROMINO_CHAR);
     }
+
+    cells = nextCells;
+    nextCells.clear();
+}
+
+bool Tetromino::Move(Board* board, int x, int y)
+{
+    if (isBuilt)
+    {
+        nextCells.clear();
+        return false;
+    }
+
+    for (auto& cell : cells)
+    {
+        if (board->IsBuiltCell(cell)) isBuilt = true;
+
+        auto nextCell = board->GetCell(cell->GetX() + x, cell->GetY() + y);
+
+        if (nextCell.get() == nullptr)
+        {
+            nextCells.clear();
+            return false;
+        }
+
+        nextCells.push_back(nextCell);
+}
+
+bool Tetromino::CheckFallDawn(Board* board)
+{
+    if (isBuilt) 
+    { 
+        nextCells.clear(); 
+        return false; 
+    }
+
+    for (auto& cell : cells)
+    {
+        if (board->IsBuiltCell(cell)) isBuilt = true;
+
+        auto nextCell = board->GetCell(cell->GetX(), cell->GetY() + 1);
+
+        if (nextCell.get() == nullptr)
+        {
+            nextCells.clear();
+            return false;
+        }
+
+        nextCells.push_back(nextCell);
+    }
+    return true;
 }
