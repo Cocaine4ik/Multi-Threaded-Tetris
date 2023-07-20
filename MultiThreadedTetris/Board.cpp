@@ -4,10 +4,11 @@
 #include "Cell.h"
 #include "Tetromino.h"
 #include <algorithm>
+#include <random>
 
 #define TABLE_WIDTH 22
-#define TABLE_HEIGHT 22
-#define BORDER_CHAR '#'
+#define TABLE_HEIGHT 15
+#define BORDER_CHAR '*'
 #define SPAWN_POS_Y 1
 
 Board::Board()
@@ -50,9 +51,15 @@ void Board::Draw()
     }
 }
 
-std::unique_ptr<Tetromino> Board::SpawnTetromino(TetrominoType type)
+std::unique_ptr<Tetromino> Board::SpawnTetromino()
 {
-    auto tetromino = std::make_unique<Tetromino>(this, type, spawnPos);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    auto randomNumber = std::uniform_int_distribution<int>(0, 6)(gen);
+    TetrominoType randomType = static_cast<TetrominoType>(randomNumber);
+
+    auto tetromino = std::make_unique<Tetromino>(this, randomType, spawnPos);
     
     return tetromino;
 }
@@ -87,4 +94,9 @@ bool Board::IsBorderCell(std::shared_ptr<Cell> cell) const
     if (it != borderCells.cend()) return true;
 
     return false;
+}
+
+void Board::AddBuiltCell(std::shared_ptr<Cell> cell)
+{
+    builtCells.push_back(cell);
 }

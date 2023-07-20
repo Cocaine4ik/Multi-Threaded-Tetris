@@ -11,6 +11,8 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
     this->type = type;
     this->pos = startPos;
 
+    isBuilt = false;
+
     auto posX = pos->GetX();
     auto posY = pos->GetY();
 
@@ -114,15 +116,58 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
     }
 }
 
-void Tetromino::FallDawn(Board* board)
+bool Tetromino::Move(Board* board, int x, int y)
 {
+    nextCells.clear();
+
     for (auto& cell : cells)
     {
-        auto nextCell = board->GetCell(cell->GetX(), cell->GetY() + 1);
-        if (nextCell.get() == nullptr) break;
+        // add next cells according to coordinates
+        auto nextCell = board->GetCell(cell->GetX() + x, cell->GetY() + y);
 
+        // if next cell is out of border or already built clear next cells and can't move so return false
+        if (nextCell.get() == nullptr && !isBuilt)
+        {
+            for (auto& cell : cells)
+            {
+                board->AddBuiltCell(cell);
+                isBuilt = true;
+            }
+            return false;
+        }
+        nextCells.push_back(nextCell);
+    }
+
+    // if tetromino is built - clear next cells and can't move so return false
+    if (isBuilt)
+    {
+        nextCells.clear();
+        return false;
+    }
+
+    // clear characters for cells vector
+    for (auto& cell : cells)
+    {
         cell->SetChr(' ');
-        cell = nextCell;
+    }
+
+    cells = nextCells;
+
+    // set characters for new cells vector
+    for (auto& cell : cells)
+    {
         cell->SetChr(TETROMINO_CHAR);
     }
+    
+    nextCells.clear();
+
+    return true;
 }
+
+bool Tetromino::Rotate(Board* board)
+{
+    nextRotateCells.clear();
+
+    return false;
+}
+

@@ -4,6 +4,7 @@
 #include <thread>
 #include <memory>
 #include "Board.h"
+#include "Tetromino.h"
 
 #define SPEED_DEFAULT 1.0
 #define SPEED_MOD 1.0
@@ -21,7 +22,7 @@ Game::Game()
 void Game::StartGame()
 {
     board = std::make_unique<Board>();
-    currentTetromino = (board->SpawnTetromino(TetrominoType::I));
+    currentTetromino = (board->SpawnTetromino());
 
     isRunning = true;
 
@@ -44,11 +45,38 @@ void Game::ExitGame()
 
 void Game::HandleInput()
 {
-    if (GetAsyncKeyState(VK_SPACE));
-    else if (GetAsyncKeyState(VK_ESCAPE));
-    else if (GetAsyncKeyState(VK_A));
-    else if (GetAsyncKeyState(VK_D));
-    else if (GetAsyncKeyState(VK_S));
+    while (isRunning)
+    {
+        if (GetAsyncKeyState(VK_SPACE))
+        {
+
+        }
+
+        else if (GetAsyncKeyState(VK_ESCAPE))
+        {
+
+        }
+
+        else if (GetAsyncKeyState(VK_A)) 
+        {
+            currentTetromino->Move(board.get(), -1, 0);
+        }
+
+        else if (GetAsyncKeyState(VK_D))
+        {
+            currentTetromino->Move(board.get(), 1, 0);
+        }
+
+        else if (GetAsyncKeyState(VK_S))
+        {
+            currentTetromino->Move(board.get(), 0, 1);
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+    
+
+
 }
 
 void Game::UpdateScore()
@@ -60,10 +88,18 @@ void Game::Render()
 {    
     while (true)
     {
-        currentTetromino->FallDawn(board.get());
+        currentTetromino->Move(board.get(), 0, 1);
+        SpawnTetromino();
         board->Draw();
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         system("cls");
     }
+}
+
+void Game::SpawnTetromino()
+{
+    if (!currentTetromino->IsBuilt()) return;
+    
+    currentTetromino = board->SpawnTetromino();
 }

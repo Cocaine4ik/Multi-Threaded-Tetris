@@ -26,6 +26,7 @@ public:
     void UpdateScore();
     void Render();
 
+    void SpawnTetromino();
 
 };
 
