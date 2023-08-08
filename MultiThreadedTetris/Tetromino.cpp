@@ -116,67 +116,58 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
     }
 }
 
-void Tetromino::FallDawn(Board* board)
+bool Tetromino::Move(Board* board, int x, int y)
 {
-    if (!CheckFallDawn(board)) return;
+    nextCells.clear();
 
     for (auto& cell : cells)
     {
-        cell->SetChr(' ');
-    }
-    for (auto& cell : nextCells)
-    {
-        cell->SetChr(TETROMINO_CHAR);
+        // add next cells according to coordinates
+        auto nextCell = board->GetCell(cell->GetX() + x, cell->GetY() + y);
+
+        // if next cell is out of border or already built clear next cells and can't move so return false
+        if (nextCell.get() == nullptr && !isBuilt)
+        {
+            for (auto& cell : cells)
+            {
+                board->AddBuiltCell(cell);
+                isBuilt = true;
+            }
+            return false;
+        }
+        nextCells.push_back(nextCell);
     }
 
-    cells = nextCells;
-    nextCells.clear();
-}
-
-bool Tetromino::Move(Board* board, int x, int y)
-{
+    // if tetromino is built - clear next cells and can't move so return false
     if (isBuilt)
     {
         nextCells.clear();
         return false;
     }
 
+    // clear characters for cells vector
     for (auto& cell : cells)
     {
-        if (board->IsBuiltCell(cell)) isBuilt = true;
-
-        auto nextCell = board->GetCell(cell->GetX() + x, cell->GetY() + y);
-
-        if (nextCell.get() == nullptr)
-        {
-            nextCells.clear();
-            return false;
-        }
-
-        nextCells.push_back(nextCell);
-}
-
-bool Tetromino::CheckFallDawn(Board* board)
-{
-    if (isBuilt) 
-    { 
-        nextCells.clear(); 
-        return false; 
+        cell->SetChr(' ');
     }
 
+    cells = nextCells;
+
+    // set characters for new cells vector
     for (auto& cell : cells)
     {
-        if (board->IsBuiltCell(cell)) isBuilt = true;
-
-        auto nextCell = board->GetCell(cell->GetX(), cell->GetY() + 1);
-
-        if (nextCell.get() == nullptr)
-        {
-            nextCells.clear();
-            return false;
-        }
-
-        nextCells.push_back(nextCell);
+        cell->SetChr(TETROMINO_CHAR);
     }
+    
+    nextCells.clear();
+
     return true;
 }
+
+bool Tetromino::Rotate(Board* board)
+{
+    nextRotateCells.clear();
+
+    return false;
+}
+

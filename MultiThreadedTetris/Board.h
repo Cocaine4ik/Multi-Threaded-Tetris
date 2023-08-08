@@ -24,4 +24,6 @@ public:
     std::shared_ptr<Cell> GetCell(int x, int y) const;
     bool IsBuiltCell(std::shared_ptr<Cell> cell) const;
     bool IsBorderCell(std::shared_ptr<Cell> cell) const;
+
+    void AddBuiltCell(std::shared_ptr<Cell> cell);
 };

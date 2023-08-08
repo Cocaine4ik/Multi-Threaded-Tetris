@@ -7,8 +7,8 @@
 #include <random>
 
 #define TABLE_WIDTH 22
-#define TABLE_HEIGHT 22
-#define BORDER_CHAR '#'
+#define TABLE_HEIGHT 15
+#define BORDER_CHAR '*'
 #define SPAWN_POS_Y 1
 
 Board::Board()
@@ -94,4 +94,9 @@ bool Board::IsBorderCell(std::shared_ptr<Cell> cell) const
     if (it != borderCells.cend()) return true;
 
     return false;
+}
+
+void Board::AddBuiltCell(std::shared_ptr<Cell> cell)
+{
+    builtCells.push_back(cell);
 }
