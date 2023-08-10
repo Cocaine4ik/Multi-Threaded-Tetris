@@ -49,7 +49,7 @@ void Game::HandleInput()
     {
         if (GetAsyncKeyState(VK_SPACE))
         {
-
+            currentTetromino->Rotate(board.get());
         }
 
         else if (GetAsyncKeyState(VK_ESCAPE))
@@ -95,13 +95,6 @@ void Game::Render()
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         system("cls");
     }
-}
-
-void Game::SpawnTetromino()
-{
-    if (!currentTetromino->IsBuilt()) return;
-    
-    currentTetromino = board->SpawnTetromino();
 }
 
 void Game::SpawnTetromino()
