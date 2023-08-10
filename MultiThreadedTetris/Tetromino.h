@@ -24,7 +24,7 @@ private:
     std::vector<std::shared_ptr<Cell>> cells;
     std::vector<std::shared_ptr<Cell>> nextCells;
     std::vector<std::shared_ptr<Cell>> nextRotateCells;
-    std::shared_ptr<Cell> pos;
+    std::shared_ptr<Cell> pivot;
 
     bool isBuilt;
 public:
