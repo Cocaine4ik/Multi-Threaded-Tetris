@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <random>
 
-#define TABLE_WIDTH 22
-#define TABLE_HEIGHT 15
+#define TABLE_WIDTH 12
+#define TABLE_HEIGHT 18
 #define BORDER_CHAR '*'
 #define SPAWN_POS_Y 1
 
@@ -61,6 +61,14 @@ std::unique_ptr<Tetromino> Board::SpawnTetromino()
 
     auto tetromino = std::make_unique<Tetromino>(this, randomType, spawnPos);
     
+    // random tetromino rotation
+    auto randomRotationCount = std::uniform_int_distribution<int>(0, 3)(gen);
+
+    for (int i = 0; i < randomRotationCount; i++)
+    {
+        tetromino->Rotate(this);
+    }
+
     return tetromino;
 }
 
