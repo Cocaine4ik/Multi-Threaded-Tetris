@@ -3,6 +3,7 @@
 #include <memory>
 #include "Board.h"
 #include "Tetromino.h"
+#include <condition_variable>
 
 class Game
 {
@@ -15,6 +16,9 @@ private:
     std::thread renderThread;
     std::thread inputThread;
     std::thread scoreThread;
+
+    std::condition_variable scoreUpdateSignal;
+    std::mutex scoreMutex;
 
 public:
     Game();

@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 #include <memory>
+#include <iostream>
 #include "Board.h"
 #include "Tetromino.h"
 
@@ -22,7 +23,6 @@ Game::Game()
 void Game::StartGame()
 {
     board = std::make_unique<Board>();
-    currentTetromino = (board->SpawnTetromino());
 
     isRunning = true;
 
@@ -81,16 +81,29 @@ void Game::HandleInput()
 
 void Game::UpdateScore()
 {
+    std::unique_lock<std::mutex> lock(scoreMutex);
+
+    while (isRunning)
+    {
+        scoreUpdateSignal.wait(lock);
+
+        std::cout << std::endl;
+        std::cout << "Score: " << score;
+        std::cout << std::endl;
+    }
 }
 
 void Game::Render()
 
 {    
-    while (true)
+    while (isRunning)
     {
-        currentTetromino->Move(board.get(), 0, 1);
         SpawnTetromino();
+        currentTetromino->Move(board.get(), 0, 1);
+
         board->Draw();
+
+        scoreUpdateSignal.notify_one();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         system("cls");
@@ -99,7 +112,7 @@ void Game::Render()
 
 void Game::SpawnTetromino()
 {
-    if (!currentTetromino->IsBuilt()) return;
+    if (currentTetromino && !currentTetromino->IsBuilt()) return;
     
     currentTetromino = board->SpawnTetromino();
 }
