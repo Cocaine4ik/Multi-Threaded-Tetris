@@ -26,4 +26,6 @@ public:
     bool IsBorderCell(std::shared_ptr<Cell> cell) const;
 
     void AddBuiltCell(std::shared_ptr<Cell> cell);
+
+    void ClearBuiltCells();
 };

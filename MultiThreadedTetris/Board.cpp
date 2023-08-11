@@ -5,11 +5,13 @@
 #include "Tetromino.h"
 #include <algorithm>
 #include <random>
+#include <unordered_set>
 
 #define TABLE_WIDTH 12
 #define TABLE_HEIGHT 18
 #define BORDER_CHAR '*'
 #define SPAWN_POS_Y 1
+#define SPAWN_POS_MARGIN 1
 
 Board::Board()
 {
@@ -33,7 +35,7 @@ Board::Board()
         }
     }
 
-    spawnPos = GetCell(TABLE_WIDTH / 2, SPAWN_POS_Y);
+    spawnPos = GetCell(TABLE_WIDTH / 2 - SPAWN_POS_MARGIN, SPAWN_POS_Y);
 }
 
 void Board::Draw()
@@ -63,10 +65,10 @@ std::unique_ptr<Tetromino> Board::SpawnTetromino()
     
     // random tetromino rotation
     auto randomRotationCount = std::uniform_int_distribution<int>(0, 3)(gen);
-
+    
     for (int i = 0; i < randomRotationCount; i++)
     {
-        tetromino->Rotate(this);
+       tetromino->Rotate(this);
     }
 
     return tetromino;
@@ -107,4 +109,36 @@ bool Board::IsBorderCell(std::shared_ptr<Cell> cell) const
 void Board::AddBuiltCell(std::shared_ptr<Cell> cell)
 {
     builtCells.push_back(cell);
+}
+
+void Board::ClearBuiltCells()
+{
+    auto compareByY = [](const std::shared_ptr<Cell>& cell1, 
+        const std::shared_ptr<Cell>& cell2)
+    {
+        return cell1->GetY() == cell2->GetY();
+    };
+
+    std::unordered_set<std::shared_ptr<Cell>, decltype(compareByY)> uniqueLines(0, compareByY);
+
+    for (const auto& cell : builtCells)
+    {
+        uniqueLines.insert(cell);
+    }
+
+    for (const auto& cell : uniqueLines)
+    {
+        const int targetY = cell->GetY();
+
+        int count = std::count_if(builtCells.begin(), builtCells.end()),
+            [targetY](const std::shared_ptr<Cell> cell)
+        {
+            return cell->GetY() == targetY;
+        });
+
+        if (count == 10)
+        {
+
+        }
+    }
 }
