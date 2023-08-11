@@ -1,7 +1,7 @@
 #include "Tetromino.h"
 #include "Cell.h"
 #include "Board.h"
-
+#include <iostream>
 #define TETROMINO_CHAR '*'
 
 Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> startPos)
@@ -17,6 +17,7 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
     {
     case TetrominoType::I: 
 
+        posY += 1;
         pivot = board->GetCell(posX +1, posY + 1);
 
         cells =
@@ -69,6 +70,8 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
 
     case TetrominoType::T:
 
+        posY += 1;
+
         pivot = board->GetCell(posX + 1, posY + 2);
 
         cells =
@@ -82,6 +85,8 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
 
     case TetrominoType::L:
 
+        posY += 1;
+
         pivot = board->GetCell(posX + 1, posY + 1);
 
         cells =
@@ -94,6 +99,8 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
         break;
 
     case TetrominoType::J:
+
+        posY += 1;
 
         pivot = board->GetCell(posX + 1, posY + 2);
 
@@ -109,6 +116,11 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
 
     for (auto cell : cells) 
     {
+        if (cell == nullptr) 
+        {
+            std::cout << "GAME OVER" << std::endl;
+            return;
+        }
         cell->SetChr(TETROMINO_CHAR);
     }
 }
@@ -116,10 +128,15 @@ Tetromino::Tetromino(Board* board, TetrominoType type, std::shared_ptr<Cell> sta
 bool Tetromino::Move(Board* board, int x, int y)
 {
     nextCells.clear();
+
+    if (pivot == nullptr) return false;
+
     auto nextPos = board->GetCell(pivot->GetX() + x, pivot->GetY() + y);
 
     for (auto& cell : cells)
     {
+        if (cell == nullptr) return false;
+
         // add next cells according to coordinates
         auto nextCell = board->GetCell(cell->GetX() + x, cell->GetY() + y);
         // if next cell is out of border or already built clear next cells and can't move so return false
@@ -172,6 +189,8 @@ bool Tetromino::Rotate(Board* board)
 
     for (auto& cell : cells)
     {
+        if (cell == nullptr || pivot == nullptr) return false;
+
         int x = cell->GetY() - pivot->GetY();
         int y = cell->GetX() - pivot->GetX();
 
